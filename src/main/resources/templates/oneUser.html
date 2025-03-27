@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User</title>
+</head>
+<body>
+<div>
+    <a th:href="@{/admin/users}">
+        <button>Go back to all Users</button>
+    </a>
+    <p/>
+
+    <a th:href="@{/logout}">
+        <button>Logout</button>
+    </a>
+    <p/>
+
+    <table border="1">
+        <thead>
+        <tr>
+            <th> ID </th>
+            <th> Name </th>
+            <th> Surname </th>
+            <th> Username </th>
+            <th> Password </th>
+            <th> Role </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td th:text="${users.id}"></td>
+            <form th:action="@{/admin/user/update(id=${users.id})}" th:method="post" th:object="${users}">
+                <input type="hidden" name="_method" value="patch" />
+                <td>
+                    <input type="text" th:field="*{name}" id="name">
+                </td>
+                <td>
+                    <input type="text" th:field="*{surname}" id="surname">
+                </td>
+                <td>
+                    <input type="text" th:field="*{username}" id="username">
+                </td>
+                <td>
+                    <input type="text" th:field="*{password}" id="password">
+                </td>
+                <td>
+                    <select class="form-control"
+                            th:field="*{roles}"
+                            multiple="multiple"
+                            name="roles">
+                        <option th:each="role : ${allRoles}"
+                                th:value="${role.id}"
+                                th:text="${role.role}"
+                                th:selected="${#lists.contains(users.roles, role)}"></option>
+                    </select>
+                </td>
+                <td>
+                    <button type="submit">Save All Changes</button>
+                </td>
+            </form>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
