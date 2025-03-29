@@ -1,13 +1,11 @@
 package ru.kata.spring.boot_security.demo.model;
 
-import net.bytebuddy.asm.Advice;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Table(name = "users1")

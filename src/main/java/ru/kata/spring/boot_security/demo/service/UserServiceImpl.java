@@ -31,11 +31,13 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public void update(Integer id, User updatedUser) {
-        User existingUser = userRepository.findById(id).get();
-        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
-            existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        updatedUser.setId(id);
+        if (updatedUser.getPassword() == null || updatedUser.getPassword().isEmpty()) {
+            updatedUser.setPassword(userRepository.getUserById(id).getPassword());
+        } else {
+            updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         }
-        userRepository.save(existingUser);
+        userRepository.save(updatedUser);
     }
 
     @Transactional
