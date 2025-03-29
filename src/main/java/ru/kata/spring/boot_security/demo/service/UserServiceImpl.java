@@ -1,53 +1,58 @@
 package ru.kata.spring.boot_security.demo.service;
 
 
-import ru.kata.spring.boot_security.demo.dao.UserDAO;
-import ru.kata.spring.boot_security.demo.model.Role;
-import ru.kata.spring.boot_security.demo.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private UserDAO userDAO;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserDAO userDAO) {
-        this.userDAO = userDAO;
+    public UserServiceImpl(UserRepository userRepository,
+                           PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
     public void create(User user) {
-        userDAO.create(user);
-    }
-
-    public List<Role> getAllRoles() {
-        return userDAO.getAllRoles();
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
     }
 
     @Transactional
-    public void update(Integer id, User user) {
-        userDAO.update(id, user);
+    public void update(Integer id, User updatedUser) {
+        User existingUser = userRepository.findById(id).get();
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
+        userRepository.save(existingUser);
     }
 
     @Transactional
     public void delete(Integer id) {
-        userDAO.delete(id);
+        userRepository.deleteById(id);
     }
 
-    public User read(Integer id) {
-        return userDAO.read(id);
+    public User find(Integer id) {
+        return userRepository.findById(id).get();
     }
 
-    public List<User> readAll() {
-        return userDAO.readAll();
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 
-    public Role readRole(Integer role) {
-        return userDAO.readRole(role);
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 }
 
